@@ -12,7 +12,7 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     normalize,
 ])
-dataset = ImageFolder('imagenet', transform, normalize, 14)
+dataset = ImageFolder('imagenet/val', transform, normalize, 14)
 loader = DataLoader(dataset, 32, False, pin_memory=True)
 
 model = vit_LRP(pretrained=True).cuda()

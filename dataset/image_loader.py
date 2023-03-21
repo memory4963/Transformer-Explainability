@@ -17,6 +17,7 @@ from pathlib import Path
 from torch.utils.data import Dataset
 import numpy as np
 from skimage.filters.rank import entropy
+import os
 
 
 class ImageFolder(Dataset):
@@ -28,6 +29,9 @@ class ImageFolder(Dataset):
         - rootdir/
             - img000.png
             - img001.png
+            - folder1/
+                - img002.png
+                - img003.png
 
     Args:
         root (string): root directory of the dataset
@@ -42,7 +46,11 @@ class ImageFolder(Dataset):
         if not root.is_dir():
             raise RuntimeError(f'Invalid directory "{root}"')
 
-        self.samples = [f for f in root.iterdir() if f.is_file()]
+        self.samples = []
+        for root, dirs, files in os.walk(root):
+            for file in files:
+                if file.endswith('.JPEG'):
+                    self.samples.append(os.path.join(root, file))
 
         self.transform = transform
         self.normalize = normalize

@@ -99,6 +99,7 @@ class Attention(nn.Module):
         self.v_cam = None
         self.attn_gradients = None
         self.head_score = torch.zeros(num_heads)
+        self.attn_mask = None
     
     def accum_head_score(self, score):
         if self.head_score.device != score.device:
@@ -149,6 +150,8 @@ class Attention(nn.Module):
 
         attn = self.softmax(dots)
         attn = self.attn_drop(attn)
+        if self.attn_mask is not None:
+            attn = torch.einsum('a,bacd->bacd', self.attn_mask, attn)
 
         self.save_attn(attn)
         attn.register_hook(self.save_attn_gradients)
