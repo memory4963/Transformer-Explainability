@@ -98,6 +98,15 @@ class Attention(nn.Module):
         self.v = None
         self.v_cam = None
         self.attn_gradients = None
+        self.head_score = torch.zeros(num_heads)
+    
+    def accum_head_score(self, score):
+        if self.head_score.device != score.device:
+            self.head_score = self.head_score.to(score.device)
+        self.head_score += score
+    
+    def get_head_score(self):
+        return self.head_score
 
     def get_attn(self):
         return self.attn
