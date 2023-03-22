@@ -27,6 +27,11 @@ for img, entr_img in tqdm(loader):
         _, idx = sum_attn.max(dim=2)
         blk.attn.accum_head_score(torch.gather(entr_img, 1, idx).mean(0))
 
+scores = torch.empty([]).cuda()[False]
 for i, blk in enumerate(model.blocks):
-    _, idx = torch.sort(blk.attn.get_head_score(), descending=True)
+    scores = torch.cat((scores, blk.attn.get_head_score()))
+    # _, idx = torch.sort(blk.attn.get_head_score(), descending=True)
     print(f"block {i}: {idx}")
+_, idx = torch.sort(scores, descending=True)
+print(f"scores: {scores}")
+print(f"order: {idx}")
